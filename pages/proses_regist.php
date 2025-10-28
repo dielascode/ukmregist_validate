@@ -4,15 +4,14 @@ include '../config/config.php';
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email     = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
-    $nama      = filter_var(trim($_POST['nama']), FILTER_SANITIZE_STRING);
-    $nim       = filter_var(trim($_POST['nim']), FILTER_SANITIZE_NUMBER_INT);
-    $jurusan   = filter_var(trim($_POST['jurusan']), FILTER_SANITIZE_STRING);
-    $prodi     = filter_var(trim($_POST['prodi']), FILTER_SANITIZE_STRING);
-    $gender    = filter_var(trim($_POST['gender']), FILTER_SANITIZE_STRING);
-    $divisi    = filter_var(trim($_POST['divisi']), FILTER_SANITIZE_STRING);
-    $angkatan  = filter_var(trim($_POST['angkatan']), FILTER_SANITIZE_NUMBER_INT);
-
+    $email     = trim($_POST['email']);
+    $nama      = trim($_POST['nama']);
+    $nim       = trim($_POST['nim']);
+    $jurusan   = trim($_POST['jurusan']);
+    $prodi     = trim($_POST['prodi']);
+    $gender    = trim($_POST['gender']);
+    $divisi    = trim($_POST['divisi']);
+    $angkatan  = trim($_POST['angkatan']);
 
     // Validasi
     if (empty($email)) {

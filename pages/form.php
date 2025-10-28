@@ -85,6 +85,17 @@
       background-color: #fafafa;
     }
 
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.8px solid #ddd;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background-color: #fafafa;
+    }
+
     input:focus,
     select:focus {
       border-color: var(--primary);
@@ -153,6 +164,8 @@
       box-shadow: 0 0 0 3px rgba(122, 71, 255, 0.15);
     }
 
+
+
     button {
       width: 100%;
       padding: 12px;
@@ -201,27 +214,27 @@
       </div>
 
       <div class="input-wrapper">
-        <label for="nim">NIM</label>
-        <input type="text" id="nim" name="nim" placeholder="Masukkan NIM" required>
+        <label for="password">Password</label>
+        <input type="text" id="password" name="password" placeholder="Masukkan password" required>
         <span class="error-icon">!</span>
-        <div class="error-msg">NIM wajib diisi.</div>
+        <div class="error-msg">Password wajib diisi</div>
       </div>
 
       <div class="input-wrapper">
-        <label for="jurusan">Jurusan</label>
-        <input type="text" id="jurusan" name="jurusan" placeholder="Masukkan jurusan" required>
+        <label for="tanggal_lahir">Tanggal Lahir</label>
+        <input type="date" id="tanggal_lahir" name="tanggal_lahir" placeholder="Masukkan tanggal lahir" required>
         <span class="error-icon">!</span>
-        <div class="error-msg">Jurusan wajib diisi.</div>
+        <div class="error-msg">Tanggal Lahir wajib diisi.</div>
       </div>
 
       <div class="input-wrapper">
-        <label for="prodi">Prodi</label>
-        <input type="text" id="prodi" name="prodi" placeholder="Masukkan prodi" required>
+        <label for="nomor_telepon">Nomor Telepon</label>
+        <input type="text" id="nomor_telepon" name="nomor_telepon" placeholder="Masukkan nomor_telepon" required>
         <span class="error-icon">!</span>
-        <div class="error-msg">Prodi wajib diisi.</div>
+        <div class="error-msg">Nomor Telepon wajib diisi.</div>
       </div>
 
-      <label>Jenis Kelamin</label>
+      <!-- <label>Jenis Kelamin</label>
       <div class="radio-group">
         <label class="radio-option">
           <input type="radio" name="gender" value="Laki-laki" required>
@@ -256,7 +269,7 @@
         </select>
         <span class="error-icon">!</span>
         <div class="error-msg">Pilih angkatan terlebih dahulu.</div>
-      </div>
+      </div> -->
 
       <button type="submit">Kirim Pendaftaran</button>
     </form>
@@ -304,29 +317,29 @@
         valid = false;
       }
       if (!nim) {
-        showError("nim", "NIM wajib diisi.");
+        showError("password", "password wajib diisi.");
         valid = false;
       }
       if (!jurusan) {
-        showError("jurusan", "Jurusan wajib diisi.");
+        showError("tanggal_lahir", "Jurusan wajib diisi.");
         valid = false;
       }
       if (!prodi) {
-        showError("prodi", "Prodi wajib diisi.");
+        showError("nomor_telepon", "Prodi wajib diisi.");
         valid = false;
       }
-      if (!gender) {
-        document.getElementById("gender-error").style.display = "block";
-        valid = false;
-      }
-      if (divisi === "Pilih Divisi") {
-        showError("divisi", "Silakan pilih divisi.");
-        valid = false;
-      }
-      if (angkatan === "Pilih Angkatan") {
-        showError("angkatan", "Silakan pilih angkatan.");
-        valid = false;
-      }
+    //   if (!gender) {
+    //     document.getElementById("gender-error").style.display = "block";
+    //     valid = false;
+    //   }
+    //   if (divisi === "Pilih Divisi") {
+    //     showError("divisi", "Silakan pilih divisi.");
+    //     valid = false;
+    //   }
+    //   if (angkatan === "Pilih Angkatan") {
+    //     showError("angkatan", "Silakan pilih angkatan.");
+    //     valid = false;
+    //   }
 
       if (!valid) return;
 
