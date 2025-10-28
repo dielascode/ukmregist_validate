@@ -171,7 +171,7 @@
       <div class="input-wrapper">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="Masukkan password" required>
-        <span class="show-hide" id="togglePassword">👁️</span>
+        <!-- <span class="show-hide" id="togglePassword">👁️</span> -->
         <span class="error-icon">!</span>
         <div class="error-msg">Password wajib diisi</div>
       </div>
@@ -198,111 +198,54 @@
   <script>
     const form = document.getElementById("registForm");
 
-    // 👁️ Tampilkan/sembunyikan password
-    const togglePassword = document.getElementById("togglePassword");
-    const passwordField = document.getElementById("password");
-    togglePassword.addEventListener("click", () => {
-      const isHidden = passwordField.type === "password";
-      passwordField.type = isHidden ? "text" : "password";
-      togglePassword.textContent = isHidden ? "🙈" : "👁️";
-    });
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  // Hapus pesan error sebelumnya
+  document.querySelectorAll(".error-msg").forEach((el) => (el.style.display = "none"));
+  document.querySelectorAll("input").forEach((el) => el.classList.remove("error-input"));
 
-      // reset error tampilan
-      document.querySelectorAll(".error-msg").forEach(e => e.style.display = "none");
-      document.querySelectorAll(".error-icon").forEach(e => e.style.display = "none");
-      document.querySelectorAll("input").forEach(e => e.classList.remove("error-input"));
+  const formData = new FormData(form);
 
-      let valid = true;
+  try {
+    const res = await fetch("proses_regist.php", { method: "POST", body: formData });
+    const data = await res.json();
 
-      const email = form.email.value.trim();
-      const nama = form.nama.value.trim();
-      const password = form.password.value.trim();
-      const tanggal_lahir = form.tanggal_lahir.value;
-      const nomor_telepon = form.nomor_telepon.value.trim();
-
-      function showError(id, msg) {
-        const input = document.getElementById(id);
-        const wrapper = input.parentElement;
-        wrapper.querySelector(".error-msg").textContent = msg;
-        wrapper.querySelector(".error-msg").style.display = "block";
-        wrapper.querySelector(".error-icon").style.display = "block";
-        input.classList.add("error-input");
-      }
-
-      // validasi dasar
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showError("email", "Format email tidak valid");
-        valid = false;
-      }
-
-      if (nama.length < 2) {
-        showError("nama", "Nama lengkap minimal 2 karakter.");
-        valid = false;
-      }
-
-      if (password.length < 6) {
-        showError("password", "Password minimal 6 karakter.");
-        valid = false;
-      }
-
-      if (!tanggal_lahir) {
-        showError("tanggal_lahir", "Tanggal lahir wajib diisi.");
-        valid = false;
-      } else {
-        const dob = new Date(tanggal_lahir);
-        const now = new Date();
-        const age = now.getFullYear() - dob.getFullYear();
-        if (age < 17 || (age === 17 && now < new Date(dob.setFullYear(now.getFullYear())))) {
-          showError("tanggal_lahir", "Usia minimal 17 tahun.");
-          valid = false;
+    if (data.success) {
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: data.message,
+      });
+      form.reset();
+    } else if (data.errors && typeof data.errors === "object") {
+      // tampilkan error di input masing-masing
+      Object.entries(data.errors).forEach(([field, msg]) => {
+        const input = document.querySelector(`[name="${field}"]`);
+        const errorMsg = input?.parentElement.querySelector(".error-msg");
+        input?.classList.add("error-input");
+        if (errorMsg) {
+          errorMsg.textContent = msg;
+          errorMsg.style.display = "block";
         }
-      }
-
-      if (!/^[0-9]{10,15}$/.test(nomor_telepon)) {
-        showError("nomor_telepon", "Nomor telepon harus 10–15 digit angka.");
-        valid = false;
-      }
-
-      if (!valid) return;
-
-      const formData = new FormData(form);
-
-      try {
-        const res = await fetch("proses_regist.php", { method: "POST", body: formData });
-        const result = await res.json();
-
-        if (result.success) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Pendaftaran Berhasil!',
-            text: result.message,
-            showConfirmButton: false,
-            timer: 2000,
-            background: '#fefcff',
-            color: '#333'
-          });
-          form.reset();
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: Object.values(result.errors).join(', '),
-            confirmButtonColor: '#7a47ff'
-          });
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error!',
-          text: 'Terjadi kesalahan saat mengirim data.',
-          confirmButtonColor: '#7a47ff'
-        });
-      }
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: data.message || "Terjadi kesalahan tak terduga.",
+      });
+    }
+  } catch (err) {
+    console.error("Fetch error:", err);
+    Swal.fire({
+      icon: "error",
+      title: "Gagal!",
+      text: "Tidak dapat terhubung ke server.",
     });
+  }
+});
+
   </script>
 </body>
 
