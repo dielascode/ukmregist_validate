@@ -2,8 +2,7 @@
 header('Content-Type: application/json');
 include '../config/config.php';
 
-// tampilkan error PHP dalam JSON biar gampang debug
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     echo json_encode([
         "success" => false,
         "error_type" => "PHP Error",
@@ -13,7 +12,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     ]);
     exit;
 });
-set_exception_handler(function($e) {
+set_exception_handler(function ($e) {
     echo json_encode([
         "success" => false,
         "error_type" => "Exception",
@@ -31,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tanggal_lahir  = trim($_POST['tanggal_lahir'] ?? '');
     $nomor_telepon  = mysqli_real_escape_string($conn, trim($_POST['nomor_telepon'] ?? ''));
 
-    // Validasi
     if (empty($email)) {
         $errors['email'] = "Email harus diisi.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -57,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-$stmt = mysqli_prepare($conn, "INSERT INTO form2 (email, nama, password, tanggal_lahir, nomor_telepon) VALUES (?, ?, ?, ?, ?)");
-mysqli_stmt_bind_param($stmt, "sssss", $email, $nama, $hashed_password, $tanggal_lahir, $nomor_telepon);
+        $stmt = mysqli_prepare($conn, "INSERT INTO form2 (email, nama, password, tanggal_lahir, nomor_telepon) VALUES (?, ?, ?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "sssss", $email, $nama, $hashed_password, $tanggal_lahir, $nomor_telepon);
 
-if ($stmt) {
-    mysqli_stmt_bind_param($stmt, "sssss", $email, $nama, $hashed_password, $tanggal_lahir, $nomor_telepon);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "sssss", $email, $nama, $hashed_password, $tanggal_lahir, $nomor_telepon);
 
             if (mysqli_stmt_execute($stmt)) {
                 echo json_encode(["success" => true, "message" => "Data berhasil disimpan."]);
