@@ -16,10 +16,6 @@
       --error-bg: #fdecea;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       background-color: var(--background);
       font-family: 'Poppins', sans-serif;
@@ -75,7 +71,8 @@
 
     input[type="text"],
     input[type="email"],
-    select {
+    input[type="password"],
+    input[type="date"] {
       width: 100%;
       padding: 12px 14px;
       border: 1.8px solid #ddd;
@@ -85,31 +82,11 @@
       background-color: #fafafa;
     }
 
-    input[type="date"],
-    select {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.8px solid #ddd;
-      border-radius: 10px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      background-color: #fafafa;
-    }
-
-    input:focus,
-    select:focus {
+    input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(122, 71, 255, 0.15);
       outline: none;
       background-color: #fff;
-    }
-
-    select {
-      appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg fill="%237a47ff" height="24" viewBox="0 0 24 24" width="24"><path d="M7 10l5 5 5-5z"/></svg>');
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 18px;
     }
 
     .error-icon {
@@ -120,6 +97,16 @@
       color: var(--error);
       font-size: 18px;
       display: none;
+    }
+
+    .show-hide {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #777;
+      font-size: 14px;
     }
 
     .error-msg {
@@ -133,38 +120,6 @@
       border-color: var(--error) !important;
       background-color: var(--error-bg) !important;
     }
-
-    .radio-group {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 6px;
-    }
-
-    .radio-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    input[type="radio"] {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #bbb;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    input[type="radio"]:checked {
-      border-color: var(--primary);
-      background-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(122, 71, 255, 0.15);
-    }
-
-
 
     button {
       width: 100%;
@@ -215,23 +170,24 @@
 
       <div class="input-wrapper">
         <label for="password">Password</label>
-        <input type="text" id="password" name="password" placeholder="Masukkan password" required>
+        <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+        <span class="show-hide" id="togglePassword">👁️</span>
         <span class="error-icon">!</span>
         <div class="error-msg">Password wajib diisi</div>
       </div>
 
       <div class="input-wrapper">
         <label for="tanggal_lahir">Tanggal Lahir</label>
-        <input type="date" id="tanggal_lahir" name="tanggal_lahir" placeholder="Masukkan tanggal lahir" required>
+        <input type="date" id="tanggal_lahir" name="tanggal_lahir" required>
         <span class="error-icon">!</span>
-        <div class="error-msg">Tanggal Lahir wajib diisi.</div>
+        <div class="error-msg">Tanggal lahir wajib diisi.</div>
       </div>
 
       <div class="input-wrapper">
         <label for="nomor_telepon">Nomor Telepon</label>
-        <input type="text" id="nomor_telepon" name="nomor_telepon" placeholder="Masukkan nomor_telepon" required>
+        <input type="text" id="nomor_telepon" name="nomor_telepon" placeholder="Masukkan nomor telepon" required>
         <span class="error-icon">!</span>
-        <div class="error-msg">Nomor Telepon wajib diisi.</div>
+        <div class="error-msg">Nomor telepon wajib diisi.</div>
       </div>
 
       <button type="submit">Kirim Pendaftaran</button>
@@ -242,15 +198,30 @@
   <script>
     const form = document.getElementById("registForm");
 
+    // 👁️ Tampilkan/sembunyikan password
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordField = document.getElementById("password");
+    togglePassword.addEventListener("click", () => {
+      const isHidden = passwordField.type === "password";
+      passwordField.type = isHidden ? "text" : "password";
+      togglePassword.textContent = isHidden ? "🙈" : "👁️";
+    });
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Reset semua error
+      // reset error tampilan
       document.querySelectorAll(".error-msg").forEach(e => e.style.display = "none");
       document.querySelectorAll(".error-icon").forEach(e => e.style.display = "none");
-      document.querySelectorAll("input, select").forEach(e => e.classList.remove("error-input"));
+      document.querySelectorAll("input").forEach(e => e.classList.remove("error-input"));
 
       let valid = true;
+
+      const email = form.email.value.trim();
+      const nama = form.nama.value.trim();
+      const password = form.password.value.trim();
+      const tanggal_lahir = form.tanggal_lahir.value;
+      const nomor_telepon = form.nomor_telepon.value.trim();
 
       function showError(id, msg) {
         const input = document.getElementById(id);
@@ -261,63 +232,48 @@
         input.classList.add("error-input");
       }
 
-      const email = form.email.value.trim();
-      const nama = form.nama.value.trim();
-      const nim = form.nim.value.trim();
-      const jurusan = form.jurusan.value.trim();
-      const prodi = form.prodi.value.trim();
-      const gender = form.querySelector('input[name="gender"]:checked');
-      const divisi = form.divisi.value;
-      const angkatan = form.angkatan.value;
-
-      // Validasi input
+      // validasi dasar
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         showError("email", "Format email tidak valid");
         valid = false;
       }
+
       if (nama.length < 2) {
         showError("nama", "Nama lengkap minimal 2 karakter.");
         valid = false;
       }
-      if (!nim) {
-        showError("password", "password wajib diisi.");
+
+      if (password.length < 6) {
+        showError("password", "Password minimal 6 karakter.");
         valid = false;
       }
-      if (!jurusan) {
-        showError("tanggal_lahir", "Jurusan wajib diisi.");
+
+      if (!tanggal_lahir) {
+        showError("tanggal_lahir", "Tanggal lahir wajib diisi.");
+        valid = false;
+      } else {
+        const dob = new Date(tanggal_lahir);
+        const now = new Date();
+        const age = now.getFullYear() - dob.getFullYear();
+        if (age < 17 || (age === 17 && now < new Date(dob.setFullYear(now.getFullYear())))) {
+          showError("tanggal_lahir", "Usia minimal 17 tahun.");
+          valid = false;
+        }
+      }
+
+      if (!/^[0-9]{10,15}$/.test(nomor_telepon)) {
+        showError("nomor_telepon", "Nomor telepon harus 10–15 digit angka.");
         valid = false;
       }
-      if (!prodi) {
-        showError("nomor_telepon", "Prodi wajib diisi.");
-        valid = false;
-      }
-    //   if (!gender) {
-    //     document.getElementById("gender-error").style.display = "block";
-    //     valid = false;
-    //   }
-    //   if (divisi === "Pilih Divisi") {
-    //     showError("divisi", "Silakan pilih divisi.");
-    //     valid = false;
-    //   }
-    //   if (angkatan === "Pilih Angkatan") {
-    //     showError("angkatan", "Silakan pilih angkatan.");
-    //     valid = false;
-    //   }
 
       if (!valid) return;
 
-      // Jika valid, kirim data ke server
       const formData = new FormData(form);
 
       try {
-        const res = await fetch("proses_regist.php", {
-          method: "POST",
-          body: formData
-        });
-
+        const res = await fetch("proses_regist.php", { method: "POST", body: formData });
         const result = await res.json();
 
-        // ✅ Tampilkan alert sukses saja
         if (result.success) {
           Swal.fire({
             icon: 'success',
@@ -325,16 +281,26 @@
             text: result.message,
             showConfirmButton: false,
             timer: 2000,
-            timerProgressBar: true,
             background: '#fefcff',
-            color: '#333',
-            confirmButtonColor: '#7a47ff'
+            color: '#333'
           });
           form.reset();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: Object.values(result.errors).join(', '),
+            confirmButtonColor: '#7a47ff'
+          });
         }
-
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Terjadi kesalahan saat mengirim data.',
+          confirmButtonColor: '#7a47ff'
+        });
       }
     });
   </script>
