@@ -84,17 +84,7 @@
 <body>
 
   <div class="result-container">
-    <h2>Data Pendaftaran UKM</h2>
-
-    <p><strong>Email:</strong> <span id="email"></span></p>
-    <p><strong>Nama Lengkap:</strong> <span id="nama"></span></p>
-    <p><strong>NIM:</strong> <span id="nim"></span></p>
-    <p><strong>Jurusan:</strong> <span id="jurusan"></span></p>
-    <p><strong>Prodi:</strong> <span id="prodi"></span></p>
-    <p><strong>Jenis Kelamin:</strong> <span id="gender"></span></p>
-    <p><strong>Divisi:</strong> <span id="divisi"></span></p>
-    <p><strong>Angkatan:</strong> <span id="angkatan"></span></p>
-
+    <h2>Proses pendaftaran anda telah sukses dilakukan, silahkan tunggu konfirmasi dari admin</h2>
     <a href="form.php">← Kembali ke Form</a>
   </div>
 
