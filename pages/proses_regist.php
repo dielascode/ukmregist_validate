@@ -1,19 +1,16 @@
 <?php
 header('Content-Type: application/json');
 include '../config/config.php';
+
 $errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email     = trim($_POST['email']);
-    $nama      = trim($_POST['nama']);
-    $nim       = trim($_POST['nim']);
-    $jurusan   = trim($_POST['jurusan']);
-    $prodi     = trim($_POST['prodi']);
-    $gender    = trim($_POST['gender']);
-    $divisi    = trim($_POST['divisi']);
-    $angkatan  = trim($_POST['angkatan']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email          = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+    $nama           = filter_var(trim($_POST['nama'] ?? ''), FILTER_SANITIZE_STRING);
+    $password       = trim($_POST['password'] ?? '');
+    $tanggal_lahir  = trim($_POST['tanggal_lahir'] ?? '');
+    $nomor_telepon  = filter_var(trim($_POST['nomor_telepon'] ?? ''), FILTER_SANITIZE_STRING);
 
-    // Validasi
     if (empty($email)) {
         $errors['email'] = "Email harus diisi.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -21,32 +18,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (empty($nama)) {
-        $errors['nama'] = "Nama harus diisi.";
-    } elseif (!preg_match("/^[a-zA-Z\s]+$/", $nama)) {
+        $errors['nama'] = "Nama lengkap wajib diisi.";
+    } elseif (!preg_match("/^[a-zA-Z\s'.-]+$/u", $nama)) {
         $errors['nama'] = "Nama hanya boleh berisi huruf dan spasi.";
     }
 
-    if (empty($nim)) {
-        $errors['nim'] = "NIM harus diisi.";
-    } elseif (!is_numeric($nim)) {
-        $errors['nim'] = "NIM harus berupa angka.";
+    if (empty($password)) {
+        $errors['password'] = "Password wajib diisi.";
+    } elseif (strlen($password) < 6) {
+        $errors['password'] = "Password minimal 6 karakter.";
     }
 
-    if (empty($jurusan)) $errors['jurusan'] = "Jurusan harus diisi.";
-    if (empty($prodi)) $errors['prodi'] = "Program studi harus diisi.";
-    if (empty($gender)) $errors['gender'] = "Jenis kelamin harus dipilih.";
-    if (empty($divisi)) $errors['divisi'] = "Divisi harus diisi.";
-
-    if (empty($angkatan)) {
-        $errors['angkatan'] = "Angkatan harus diisi.";
-    } elseif (!is_numeric($angkatan) || strlen($angkatan) != 4) {
-        $errors['angkatan'] = "Angkatan harus berupa tahun (contoh: 2024).";
+    if (empty($tanggal_lahir)) {
+        $errors['tanggal_lahir'] = "Tanggal lahir wajib diisi.";
+    } elseif (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $tanggal_lahir)) {
+        $errors['tanggal_lahir'] = "Format tanggal tidak valid (YYYY-MM-DD).";
     }
 
-    // Jika tidak ada error
+    if (empty($nomor_telepon)) {
+        $errors['nomor_telepon'] = "Nomor telepon wajib diisi.";
+    } elseif (!preg_match("/^[0-9]{10,15}$/", $nomor_telepon)) {
+        $errors['nomor_telepon'] = "Nomor telepon harus 10–15 digit angka.";
+    }
+
     if (empty($errors)) {
-        $query = "INSERT INTO form (email, nama, nim, jurusan, prodi, gender, divisi, angkatan)
-                  VALUES ('$email', '$nama', '$nim', '$jurusan', '$prodi', '$gender', '$divisi', '$angkatan')";
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $query = "INSERT INTO form (email, nama, password, tanggal_lahir, nomor_telepon)
+                  VALUES ('$email', '$nama', '$hashed_password', '$tanggal_lahir', '$nomor_telepon')";
 
         if (mysqli_query($conn, $query)) {
             echo json_encode(["success" => true, "message" => "Data berhasil disimpan."]);

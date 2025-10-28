@@ -234,43 +234,6 @@
         <div class="error-msg">Nomor Telepon wajib diisi.</div>
       </div>
 
-      <!-- <label>Jenis Kelamin</label>
-      <div class="radio-group">
-        <label class="radio-option">
-          <input type="radio" name="gender" value="Laki-laki" required>
-          <span>Laki-laki</span>
-        </label>
-        <label class="radio-option">
-          <input type="radio" name="gender" value="Perempuan">
-          <span>Perempuan</span>
-        </label>
-      </div>
-      <div class="error-msg" id="gender-error">Pilih jenis kelamin.</div>
-
-      <div class="input-wrapper">
-        <label for="divisi">Divisi</label>
-        <select id="divisi" name="divisi" required>
-          <option selected disabled>Pilih Divisi</option>
-          <option>Humas</option>
-          <option>Media Kreatif</option>
-          <option>Acara</option>
-          <option>Administrasi</option>
-        </select>
-        <span class="error-icon">!</span>
-        <div class="error-msg">Pilih divisi terlebih dahulu.</div>
-      </div>
-
-      <div class="input-wrapper">
-        <label for="angkatan">Angkatan</label>
-        <select id="angkatan" name="angkatan" required>
-          <option selected disabled>Pilih Angkatan</option>
-          <option>2024</option>
-          <option>2025</option>
-        </select>
-        <span class="error-icon">!</span>
-        <div class="error-msg">Pilih angkatan terlebih dahulu.</div>
-      </div> -->
-
       <button type="submit">Kirim Pendaftaran</button>
     </form>
   </div>
