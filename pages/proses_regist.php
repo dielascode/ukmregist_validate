@@ -1,21 +1,20 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
+header('Content-Type: application/json');
 include '../config/config.php';
-
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email     = trim($_POST['email']);
-    $nama      = trim($_POST['nama']);
-    $nim       = trim($_POST['nim']);
-    $jurusan   = trim($_POST['jurusan']);
-    $prodi     = trim($_POST['prodi']);
-    $gender    = trim($_POST['gender']);
-    $divisi    = trim($_POST['divisi']);
-    $angkatan  = trim($_POST['angkatan']);
+    $email     = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+    $nama      = filter_var(trim($_POST['nama']), FILTER_SANITIZE_STRING);
+    $nim       = filter_var(trim($_POST['nim']), FILTER_SANITIZE_NUMBER_INT);
+    $jurusan   = filter_var(trim($_POST['jurusan']), FILTER_SANITIZE_STRING);
+    $prodi     = filter_var(trim($_POST['prodi']), FILTER_SANITIZE_STRING);
+    $gender    = filter_var(trim($_POST['gender']), FILTER_SANITIZE_STRING);
+    $divisi    = filter_var(trim($_POST['divisi']), FILTER_SANITIZE_STRING);
+    $angkatan  = filter_var(trim($_POST['angkatan']), FILTER_SANITIZE_NUMBER_INT);
 
+
+    // Validasi
     if (empty($email)) {
         $errors['email'] = "Email harus diisi.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -34,21 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['nim'] = "NIM harus berupa angka.";
     }
 
-    if (empty($jurusan)) {
-        $errors['jurusan'] = "Jurusan harus dipilih.";
-    }
-
-    if (empty($prodi)) {
-        $errors['prodi'] = "Program studi harus diisi.";
-    }
-
-    if (empty($gender)) {
-        $errors['gender'] = "Jenis kelamin harus dipilih.";
-    }
-
-    if (empty($divisi)) {
-        $errors['divisi'] = "Divisi harus diisi.";
-    }
+    if (empty($jurusan)) $errors['jurusan'] = "Jurusan harus diisi.";
+    if (empty($prodi)) $errors['prodi'] = "Program studi harus diisi.";
+    if (empty($gender)) $errors['gender'] = "Jenis kelamin harus dipilih.";
+    if (empty($divisi)) $errors['divisi'] = "Divisi harus diisi.";
 
     if (empty($angkatan)) {
         $errors['angkatan'] = "Angkatan harus diisi.";
@@ -56,24 +44,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['angkatan'] = "Angkatan harus berupa tahun (contoh: 2024).";
     }
 
+    // Jika tidak ada error
     if (empty($errors)) {
         $query = "INSERT INTO form (email, nama, nim, jurusan, prodi, gender, divisi, angkatan)
                   VALUES ('$email', '$nama', '$nim', '$jurusan', '$prodi', '$gender', '$divisi', '$angkatan')";
 
         if (mysqli_query($conn, $query)) {
-            header("Location: hasil.php");
-            exit();
+            echo json_encode(["success" => true, "message" => "Data berhasil disimpan."]);
         } else {
-            echo "<h3 style='color:red;'>Gagal menyimpan data: " . mysqli_error($conn) . "</h3>";
+            echo json_encode(["success" => false, "errors" => ["database" => "Gagal menyimpan ke database: " . mysqli_error($conn)]]);
         }
     } else {
-        echo "<ul style='color:red;'>";
-        foreach ($errors as $field => $message) {
-            echo "<li><strong>" . ucfirst($field) . ":</strong> $message</li>";
-        }
-        echo "</ul>";
+        echo json_encode(["success" => false, "errors" => $errors]);
     }
-} else {
-    echo "<h3>Tidak ada data yang dikirim.</h3>";
 }
 ?>
